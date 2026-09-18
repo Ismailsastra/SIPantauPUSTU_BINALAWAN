@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIPantau PUSTU BINALAWAN - UPTD BLUD Puskesmas Setabu</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        },
+                        teal: {
+                            700: '#0f766e',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .modal-active {
+            overflow: hidden;
+        }
+        .bg-pattern {
+            background-color: #f8fafc;
+            background-image: radial-gradient(#10b981 0.5px, transparent 0.5px), radial-gradient(#10b981 0.5px, #f8fafc 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0,10px 10px;
+            background-opacity: 0.05;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
+
+    <!-- Top Header Bar -->
+    <div class="bg-emerald-900 text-emerald-100 text-xs py-1.5 px-4">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+            <div class="flex items-center space-x-2">
+                <i data-lucide="map-pin" class="w-3.5 h-3.5 text-emerald-400"></i>
+                <span>Desa Binalawan, Kec. Sebatik Barat, Kab. Nunukan, Kalimantan Utara</span>
+            </div>
+            <div class="flex items-center space-x-4">
+                <span><i data-lucide="phone" class="w-3.5 h-3.5 inline mr-1"></i>Darurat Pustu: 0853-4113-0948</span>
+                <span><i data-lucide="clock" class="w-3.5 h-3.5 inline mr-1"></i>Jam Layanan: 07.30 - 16.00 WITA</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation Header -->
+    <header class="bg-white shadow-md sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo & Title -->
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-emerald-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-emerald-200">
+                        <i data-lucide="activity" class="w-7 h-7"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-2">
+                            <span class="font-bold text-xl text-emerald-800 tracking-tight">SIPantau BINALAWAN</span>
+                            <span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2 py-0.5 rounded-full border border-emerald-300">PUSTU</span>
+                        </div>
+                        <p class="text-xs text-slate-500 font-medium">UPTD BLUD Puskesmas Setabu - Pos Kesehatan Desa Binalawan</p>
+                    </div>
+                </div>
+
+                <!-- Desktop Nav Controls -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <a href="#dashboard" class="text-slate-600 hover:text-emerald-700 font-medium text-sm transition-colors">Dashboard</a>
+                    <a href="#skrining" class="text-slate-600 hover:text-emerald-700 font-medium text-sm transition-colors">Lapor/Skrining</a>
+                    <a href="#informasi" class="text-slate-600 hover:text-emerald-700 font-medium text-sm transition-colors">Jadwal & Nakes</a>
+                    
+                    <!-- Auth Button Container -->
+                    <div id="authHeaderBtnContainer">
+                        <!-- Rendered dynamically by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Mobile menu button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobileMenuBtn" class="text-slate-600 hover:text-slate-900 p-2 focus:outline-none">
+                        <i data-lucide="menu" class="w-6 h-6"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-4 space-y-2">
+            <a href="#dashboard" class="block py-2 text-slate-700 font-medium hover:text-emerald-600">Dashboard</a>
+            <a href="#skrining" class="block py-2 text-slate-700 font-medium hover:text-emerald-600">Form Lapor/Skrining</a>
+            <a href="#informasi" class="block py-2 text-slate-700 font-medium hover:text-emerald-600">Jadwal & Nakes Pustu</a>
+            <div id="mobileAuthContainer" class="pt-2 border-t border-slate-100">
+                <!-- Rendered dynamically -->
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Banner Section -->
+    <section class="bg-gradient-to-r from-emerald-800 to-teal-700 text-white py-10 px-4 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between relative z-10 gap-6">
+            <div class="max-w-2xl">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-700/80 text-emerald-200 border border-emerald-500/30 mb-3">
+                    <i data-lucide="shield-check" class="w-4 h-4"></i> Pelayanan Kesehatan Desa Binalawan Kec.Sebatik Barat
+                </span>
+                <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Sistem Pemantauan Kesehatan Warga Binalawan</h1>
+                <p class="mt-3 text-emerald-100 text-sm sm:text-base leading-relaxed">
+                    Fasilitas resmi pelaporan kesehatan mandiri, skrining Dini PTM/Ibu-Anak, serta pemantauan status penanganan medis secara real-time oleh petugas Pustu Binalawan & Puskesmas Setabu.
+                </p>
+                <div class="mt-6 flex flex-wrap gap-3">
+                    <a href="#skrining" class="inline-flex items-center space-x-2 bg-white text-emerald-800 hover:bg-emerald-50 px-5 py-2.5 rounded-lg font-bold text-sm shadow-md transition-all">
+                        <i data-lucide="file-plus" class="w-4 h-4"></i>
+                        <span>Buat Laporan Kesehatan</span>
+                    </a>
+                    <a href="#jadwal-piket" class="inline-flex items-center space-x-2 bg-emerald-700/50 hover:bg-emerald-700 text-white px-5 py-2.5 rounded-lg font-medium text-sm border border-emerald-500/40 transition-all">
+                        <i data-lucide="calendar" class="w-4 h-4"></i>
+                        <span>Jadwal Nakes Pustu</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Quick Status Box -->
+            <div class="bg-white/10 backdrop-blur-md rounded-2xl p-5 border border-white/20 w-full md:w-80 shadow-xl">
+                <h3 class="text-sm font-semibold text-emerald-200 uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <i data-lucide="alert-circle" class="w-4 h-4 text-emerald-300"></i> Status Pustu Hari Ini
+                </h3>
+                <div class="space-y-3 text-xs">
+                    <div class="flex justify-between items-center py-1 border-b border-white/10">
+                        <span class="text-emerald-100">Status Operasional:</span>
+                        <span class="bg-emerald-400 text-emerald-950 font-bold px-2 py-0.5 rounded">Buka / Pelayanan</span>
+                    </div>
+                    <div class="flex justify-between items-center py-1 border-b border-white/10">
+                        <span class="text-emerald-100">Nakes Pustu:</span>
+                        <span class="font-medium text-white">Perawat. Harniati, A.Md.Kep</span>
+                    </div>
+                    <div class="flex justify-between items-center py-1">
+                        <span class="text-emerald-100">Rujukan Aktif:</span>
+                        <span class="text-white font-medium">Siap (Ambulans Pustu Ready)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+
+        <!-- Live Dashboard Section -->
+        <section id="dashboard" class="scroll-mt-24">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-2">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800 flex items-center gap-2">
+                        <i data-lucide="bar-chart-3" class="w-6 h-6 text-emerald-600"></i>
+                        Dashboard Pemantauan Wilayah
+                    </h2>
+                    <p class="text-xs text-slate-500">Data ter-update dari laporan skrining warga & rekap medis Pustu Binalawan</p>
+                </div>
+                <div class="text-xs bg-slate-100 text-slate-600 px-3 py-1.5 rounded-md border border-slate-200">
+                    Sesi Sistem: <span class="font-semibold text-emerald-700" id="sessionStatusLabel">Akses Publik</span>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Stat Card 1 -->
+                <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-500">Total Laporan Warga</p>
+                        <h3 class="text-2xl font-bold text-slate-800 mt-1" id="statTotalLaporan">0</h3>
+                        <span class="text-[10px] text-emerald-600 font-medium">Tercatat di sistem</span>
+                    </div>
+                    <div class="w-12 h-12 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600">
+                        <i data-lucide="file-text" class="w-6 h-6"></i>
+                    </div>
+                </div>
+
+                <!-- Stat Card 2 -->
+                <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-500">Menunggu Tindakan</p>
+                        <h3 class="text-2xl font-bold text-amber-600 mt-1" id="statPending">0</h3>
+                        <span class="text-[10px] text-amber-600 font-medium">Memerlukan pengecekan</span>
+                    </div>
+                    <div class="w-12 h-12 bg-amber-50 rounded-lg flex items-center justify-center text-amber-600">
+                        <i data-lucide="clock" class="w-6 h-6"></i>
+                    </div>
+                </div>
+
+                <!-- Stat Card 3 -->
+                <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-500">Selesai / Ditangani</p>
+                        <h3 class="text-2xl font-bold text-emerald-600 mt-1" id="statSelesai">0</h3>
+                        <span class="text-[10px] text-emerald-600 font-medium">Telah mendapat saran/obat</span>
+                    </div>
+                    <div class="w-12 h-12 bg-emerald-50 rounded-lg flex items-center justify-center text-emerald-600">
+                        <i data-lucide="check-circle-2" class="w-6 h-6"></i>
+                    </div>
+                </div>
+
+                <!-- Stat Card 4 -->
+                <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-medium text-slate-500">Rujukan Puskesmas Setabu</p>
+                        <h3 class="text-2xl font-bold text-blue-600 mt-1" id="statRujukan">0</h3>
+                        <span class="text-[10px] text-blue-600 font-medium">E-Rujukan Terintegrasi</span>
+                    </div>
+                    <div class="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600">
+                        <i data-lucide="ambulance" class="w-6 h-6"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Form Skrining & Lapor Mandiri -->
+        <section id="skrining" class="scroll-mt-24">
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+                <div class="bg-emerald-700 text-white px-6 py-4 flex items-center justify-between">
+                    <div class="flex items-center space-x-3">
+                        <i data-lucide="clipboard-signature" class="w-6 h-6 text-emerald-200"></i>
+                        <div>
+                            <h3 class="font-bold text-lg">Form Pelaporan & Skrining Kesehatan Mandiri Warga</h3>
+                            <p class="text-xs text-emerald-100">Silakan isi keluhan kesehatan Anda untuk dipantau oleh Nakes Pustu Binalawan</p>
+                        </div>
+                    </div>
+                    <span class="hidden sm:inline-block text-xs bg-emerald-800 text-emerald-200 px-3 py-1 rounded-full border border-emerald-600">Respons Cepat 1x24 Jam</span>
+                </div>
+
+                <form id="laporanForm" class="p-6 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Nama Pasien/Warga -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Nama Lengkap *</label>
+                            <input type="text" id="nama" required placeholder="Contoh: Ahmad Yani" class="w-full px-3.5 py-2.5 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all">
+                        </div>
+
+                        <!-- Umur -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Umur (Tahun) *</label>
+                            <input type="number" id="umur" required min="0" max="120" placeholder="Contoh: 45" class="w-full px-3.5 py-2.5 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all">
+                        </div>
+
+                        <!-- RT / Wilayah Lokasi -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">RT / Dusun (Lokasi) *</label>
+                            <select id="rt" required class="w-full px-3.5 py-2.5 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all bg-white">
+                                <option value="">-- Pilih Wilayah RT --</option>
+                                <option value="RT 01 Binalawan">RT 01 Binalawan</option>
+                                <option value="RT 02 Binalawan">RT 02 Binalawan</option>
+                                <option value="RT 03 Binalawan">RT 03 Binalawan</option>
+                                <option value="RT 04 Binalawan">RT 04 Binalawan</option>
+                                <option value="RT 05 Binalawan">RT 05 Binalawan</option>
+                                <option value="RT 06 Binalawan">RT 06 Binalawan</option>
+                                <option value="RT 07 Binalawan">RT 07 Binalawan</option>
+                                <option value="RT 08 Binalawan">RT 08 Binalawan</option>
+                                <option value="RT 09 Binalawan">RT 09 Binalawan</option>
+                                <option value="RT 10 Binalawan">RT 10 Binalawan</option>
+                                <option value="RT 11 Binalawan">RT 11 Binalawan</option>
+                                <option value="RT 12 Binalawan">RT 12 Binalawan</option>                                
+                            </select>
+                        </div>
+
+                        <!-- Kategori Layanan -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Kategori Layanan *</label>
+                            <select id="kategori" required class="w-full px-3.5 py-2.5 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all bg-white">
+                                <option value="Umum">Pemeriksaan Umum (Demam, Batuk, Flu)</option>
+                                <option value="PTM">Skrining PTM (Tensi Tinggi, Gula Darah, Kolesterol)</option>
+                                <option value="Ibu & Anak">Kesehatan Ibu & Anak (KIA / Ibu Hamil / Balita)</option>
+                                <option value="Lansia">Kesehatan Lansia</option>
+                            </select>
+                        </div>
+
+                        <!-- Nomor HP / WhatsApp -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">No. Telepon / WhatsApp *</label>
+                            <input type="tel" id="noHp" required placeholder="08xxxxxxxxxx" class="w-full px-3.5 py-2.5 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all">
+                        </div>
+
+                        <!-- Gejala Utama / Pilihan Cepat -->
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Gejala Utama yang Dirasakan</label>
+                            <input type="text" id="gejala" placeholder="Contoh: Pusing, Demam 2 hari, Sesak" class="w-full px-3.5 py-2.5 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all">
+                        </div>
+                    </div>
+
+                    <!-- Detail Keluhan -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Detail Keluhan & Riwayat Penyakit *</label>
+                        <textarea id="keluhan" required rows="3" placeholder="Jelaskan secara detail keluhan yang dialami..." class="w-full px-3.5 py-2.5 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all"></textarea>
+                    </div>
+
+                    <div class="flex items-center justify-between pt-2 border-t border-slate-100">
+                        <p class="text-xs text-slate-500 italic">* Laporan ini aman dan hanya diakses oleh Tenaga Kesehatan Pustu Binalawan.</p>
+                        <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm px-6 py-2.5 rounded-lg shadow-md hover:shadow-lg transition-all flex items-center space-x-2">
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                            <span>Kirim Laporan Kesehatan</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Tabel Laporan & Monitoring Status Warga -->
+        <section class="space-y-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                        <i data-lucide="list-checks" class="w-5 h-5 text-emerald-600"></i>
+                        Daftar Pemantauan Laporan Kesehatan Warga
+                    </h3>
+                    <p class="text-xs text-slate-500">Status penanganan keluhan warga Binalawan secara transparan</p>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2">
+                    <!-- Filter Status -->
+                    <select id="filterStatus" class="px-3 py-1.5 text-xs rounded-lg border border-slate-300 bg-white font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <option value="Semua">Semua Status</option>
+                        <option value="Menunggu">Menunggu</option>
+                        <option value="Diproses">Diproses</option>
+                        <option value="Selesai">Selesai</option>
+                        <option value="Dirujuk ke Puskesmas Setabu">Rujukan Puskesmas</option>
+                    </select>
+
+                    <button id="exportCsvBtn" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-300 flex items-center space-x-1 transition-colors">
+                        <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                        <span>Ekspor CSV</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Table Container -->
+            <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-600 text-[11px] font-bold uppercase tracking-wider border-b border-slate-200">
+                            <th class="py-3 px-4">Waktu Lapor</th>
+                            <th class="py-3 px-4">Nama Pasien / Umur</th>
+                            <th class="py-3 px-4">Lokasi (RT)</th>
+                            <th class="py-3 px-4">Kategori & Keluhan</th>
+                            <th class="py-3 px-4">Status Penanganan</th>
+                            <th class="py-3 px-4 text-center">Aksi / Nakes</th>
+                        </tr>
+                    </thead>
+                    <tbody id="laporanTableBody" class="divide-y divide-slate-100 text-xs">
+                        <!-- Rendered dynamically -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Edukasi, Jadwal Pelayanan & Rujukan -->
+        <section id="informasi" class="scroll-mt-24 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Card 1: Jadwal Layanan -->
+            <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 bg-emerald-100 text-emerald-700 rounded-lg flex items-center justify-center">
+                            <i data-lucide="calendar-days" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-base">Jadwal Layanan Pustu</h4>
+                            <p class="text-xs text-slate-500">Pos Kesehatan Desa Binalawan</p>
+                        </div>
+                    </div>
+                    <ul class="space-y-3 text-xs">
+                        <li class="flex justify-between py-1 border-b border-slate-100">
+                            <span class="font-medium text-slate-700">Senin - Kamis</span>
+                            <span class="text-emerald-700 font-semibold">07.30 - 16.00 WITA</span>
+                        </li>
+                        <li class="flex justify-between py-1 border-b border-slate-100">
+                            <span class="font-medium text-slate-700">Jumat</span>
+                            <span class="text-emerald-700 font-semibold">07.30 - 16.30 WITA</span>
+                        </li>
+                        <li class="flex justify-between py-1 border-b border-slate-100">
+                            <span class="font-medium text-slate-700">Sabtu & Minggu</span>
+                            <span class="text-amber-600 font-medium">On-Call Darurat</span>
+                        </li>
+                        <li class="flex justify-between py-1">
+                            <span class="font-medium text-slate-700">Posyandu Lansia & Balita</span>
+                            <span class="text-slate-600">Sesuai Jadwal</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-100 text-[11px] text-slate-500 flex items-center gap-1">
+                    <i data-lucide="info" class="w-3.5 h-3.5 text-emerald-600"></i>
+                    <span>Pelayanan gawat darurat tetap dilayani 24 jam.</span>
+                </div>
+            </div>
+
+            <!-- Card 2: Nakes Piket -->
+            <div id="jadwal-piket" class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 bg-teal-100 text-teal-700 rounded-lg flex items-center justify-center">
+                            <i data-lucide="user-check" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-base">Petugas / Nakes Penanggung Jawab</h4>
+                            <p class="text-xs text-slate-500">Pustu Binalawan Sebatik Barat</p>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="p-2.5 bg-slate-50 rounded-lg border border-slate-100 flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded-full bg-emerald-600 text-white font-bold text-xs flex items-center justify-center">
+                                P
+                            </div>
+                            <div>
+                                <h5 class="text-xs font-bold text-slate-800">Perawat. Harniati,Amd.Kep</h5>
+                                <p class="text-[10px] text-slate-500">Perawat / Penanggung Jawab Pustu</p>
+                            </div>
+                        </div>
+                       
+                <div class="mt-4 pt-3 border-t border-slate-100 text-[11px] text-slate-500 flex items-center justify-between">
+                    <span>Di bawah supervisi:</span>
+                    <span class="font-bold text-emerald-800">UPTD BLUD Puskesmas Setabu</span>
+                </div>
+            </div>
+
+            <!-- Card 3: Prosedur Rujukan Cepat -->
+            <div class="bg-white rounded-xl p-6 border border-slate-200 shadow-sm flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 bg-blue-100 text-blue-700 rounded-lg flex items-center justify-center">
+                            <i data-lucide="truck" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-slate-800 text-base">Rujukan Puskesmas Setabu</h4>
+                            <p class="text-xs text-slate-500">Sistem Integrasi Penanganan Lanjutan</p>
+                        </div>
+                    </div>
+                    <div class="text-xs text-slate-600 space-y-2">
+                        <p>Pasien di Binalawan yang membutuhkan penanganan lebih lanjut (seperti Laboratorium lengkap, Rawat Inap, atau Dokter Spesialis) akan dibuatkan **E-Rujukan Langsung** ke Puskesmas Setabu.</p>
+                        <div class="p-2.5 bg-blue-50 text-blue-800 rounded-lg text-[11px] border border-blue-200 font-medium">
+                            <i data-lucide="phone-call" class="w-3.5 h-3.5 inline mr-1"></i> Call Center Rujukan: 0823-5069-9490
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-100 text-[11px] text-slate-500">
+                    Jarak Pustu Binalawan ke Puskesmas Setabu: ± 10 Menit (Ambulans Siaga).
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Modal Login Petugas / Nakes Pustu -->
+    <div id="loginModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center hidden p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 relative">
+            <button id="closeModalBtn" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-xl flex items-center justify-center mx-auto mb-3">
+                    <i data-lucide="lock" class="w-6 h-6"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800">Login Petugas Nakes</h3>
+                <p class="text-xs text-slate-500 mt-1">Akses khusus petugas Pustu Binalawan & Puskesmas Setabu</p>
+            </div>
+
+            <!-- Demo Credential Note -->
+            <div class="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg text-xs text-amber-800">
+                <p class="font-bold mb-1"><i data-lucide="key" class="w-3.5 h-3.5 inline mr-1"></i> Akun Demo Petugas:</p>
+                <div class="flex justify-between">
+                    <span>Username: <strong class="select-all">petugas</strong></span>
+                    <span>Password: <strong class="select-all">pustu2026</strong></span>
+                </div>
+            </div>
+
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Username / NIP</label>
+                    <input type="text" id="loginUsername" required class="w-full px-3.5 py-2 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1">Kata Sandi</label>
+                    <input type="password" id="loginPassword" required class="w-full px-3.5 py-2 text-sm rounded-lg border border-slate-300 focus:ring-2 focus:ring-emerald-500 outline-none">
+                </div>
+
+                <div id="loginError" class="hidden text-xs text-red-600 bg-red-50 p-2.5 rounded-lg border border-red-200 font-medium"></div>
+
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm py-2.5 rounded-lg shadow-md transition-all">
+                    Masuk ke Sistem Petugas
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-8 text-xs border-t border-slate-800 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="text-center md:text-left">
+                <p class="font-semibold text-slate-200">SIPantau BINALAWAN © 2026</p>
+                <p class="text-slate-500 mt-1">UPTD BLUD Puskesmas Setabu - Pustu Binalawan, Kecamatan Sebatik Barat, Kabupaten Nunukan.</p>
+            </div>
+            <div class="flex space-x-4 text-slate-400">
+                <a href="#" class="hover:text-emerald-400">Kebijakan Privasi Pasien</a>
+                <span>•</span>
+                <a href="#" class="hover:text-emerald-400">Dinas Kesehatan Kab. Nunukan</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- DATA INITIALIZATION & LOCALSTORAGE MANAGEMENT ---
+        
+        // Initial sample data if localStorage is empty
+        const INITIAL_LAPORAN = [
+            {
+                id: 'LAP-1001',
+                timestamp: '2026-03-18 08:30',
+                nama: 'Bahruddin',
+                umur: 52,
+                rt: 'RT 02 Binalawan',
+                kategori: 'PTM',
+                noHp: '081234567812',
+                gejala: 'Pusing dan Tengkuk Berat',
+                keluhan: 'Sudah 3 hari pusing, tensi terakhir di rumah 150/90. Mengeluh tengkuk terasa kaku.',
+                status: 'Menunggu',
+                nakesNote: ''
+            },
+            {
+                id: 'LAP-1002',
+                timestamp: '2026-03-18 09:15',
+                nama: 'Siti Aminah',
+                umur: 28,
+                rt: 'RT 04 Binalawan',
+                kategori: 'Ibu & Anak',
+                noHp: '082198765432',
+                gejala: 'Pemeriksaan Rutin Kehamilan',
+                keluhan: 'Hamil usia 6 bulan, ingin konsultasi gizi dan cek Hb berkala.',
+                status: 'Diproses',
+                nakesNote: 'DiJadwalkan kunjungan Bidan Desa jam 11 WITA.'
+            },
+            {
+                id: 'LAP-1003',
+                timestamp: '2026-03-17 14:00',
+                nama: 'M. Tahir',
+                umur: 65,
+                rt: 'RT 01 Binalawan',
+                kategori: 'Lansia',
+                noHp: '085211223344',
+                gejala: 'Nyeri Sendi Lutut',
+                keluhan: 'Sulit berjalan karena nyeri lutut kambuh.',
+                status: 'Selesai',
+                nakesNote: 'Obat analgesik & vitamin diberikan oleh Perawat Herman.'
+            }
+        ];
+
+        // Retrieve Laporan Data from localStorage or initialize
+        function getLaporanData() {
+            const data = localStorage.getItem('sipantau_laporan');
+            if (!data) {
+                localStorage.setItem('sipantau_laporan', JSON.stringify(INITIAL_LAPORAN));
+                return INITIAL_LAPORAN;
+            }
+            return JSON.parse(data);
+        }
+
+        function saveLaporanData(data) {
+            localStorage.setItem('sipantau_laporan', JSON.stringify(data));
+            renderApp();
+        }
+
+        // Auth Session Management using localStorage
+        function getAuthSession() {
+            const session = localStorage.getItem('sipantau_petugas_session');
+            return session ? JSON.parse(session) : null;
+        }
+
+        function setAuthSession(userObject) {
+            localStorage.setItem('sipantau_petugas_session', JSON.stringify(userObject));
+            renderApp();
+        }
+
+        function clearAuthSession() {
+            localStorage.removeItem('sipantau_petugas_session');
+            renderApp();
+        }
+
+        // --- RENDER APP & UI LOGIC ---
+
+        function renderApp() {
+            const laporanList = getLaporanData();
+            const session = getAuthSession();
+            const isPetugas = !!session;
+
+            // Update Session Label in Dashboard
+            const sessionLabel = document.getElementById('sessionStatusLabel');
+            if (isPetugas) {
+                sessionLabel.textContent = `Login: ${session.nama} (${session.role})`;
+                sessionLabel.className = "font-semibold text-emerald-800 bg-emerald-100 px-2 py-0.5 rounded border border-emerald-300";
+            } else {
+                sessionLabel.textContent = "Akses Publik Warga";
+                sessionLabel.className = "font-semibold text-slate-700";
+            }
+
+            // Update Auth Buttons in Header
+            const authContainer = document.getElementById('authHeaderBtnContainer');
+            const mobileAuthContainer = document.getElementById('mobileAuthContainer');
+
+            if (isPetugas) {
+                const loggedInHtml = `
+                    <div class="flex items-center space-x-3">
+                        <span class="text-xs font-semibold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-lg border border-emerald-200 hidden sm:inline-block">
+                            <i data-lucide="user-check" class="w-3.5 h-3.5 inline mr-1"></i> ${session.nama}
+                        </span>
+                        <button onclick="handleLogout()" class="bg-red-50 hover:bg-red-100 text-red-600 font-bold text-xs px-3 py-2 rounded-lg border border-red-200 transition-colors flex items-center space-x-1">
+                            <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                            <span>Logout</span>
+                        </button>
+                    </div>
+                `;
+                authContainer.innerHTML = loggedInHtml;
+                mobileAuthContainer.innerHTML = `<button onclick="handleLogout()" class="w-full text-left font-bold text-red-600 py-2">Logout (${session.nama})</button>`;
+            } else {
+                const loggedOutHtml = `
+                    <button onclick="openLoginModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2 rounded-lg shadow-sm transition-all flex items-center space-x-1">
+                        <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+                        <span>Login Petugas</span>
+                    </button>
+                `;
+                authContainer.innerHTML = loggedOutHtml;
+                mobileAuthContainer.innerHTML = `<button onclick="openLoginModal()" class="w-full text-left font-bold text-emerald-700 py-2">Login Petugas Nakes</button>`;
+            }
+
+            // Update Dashboard Statistics
+            document.getElementById('statTotalLaporan').textContent = laporanList.length;
+            document.getElementById('statPending').textContent = laporanList.filter(d => d.status === 'Menunggu').length;
+            document.getElementById('statSelesai').textContent = laporanList.filter(d => d.status === 'Selesai').length;
+            document.getElementById('statRujukan').textContent = laporanList.filter(d => d.status === 'Dirujuk ke Puskesmas Setabu').length;
+
+            // Render Table
+            renderTable(laporanList, isPetugas);
+
+            // Re-initialize Lucide Icons
+            lucide.createIcons();
+        }
+
+        // Render Laporan Table
+        function renderTable(data, isPetugas) {
+            const tableBody = document.getElementById('laporanTableBody');
+            const filterValue = document.getElementById('filterStatus').value;
+
+            let filteredData = data;
+            if (filterValue !== 'Semua') {
+                filteredData = data.filter(item => item.status === filterValue);
+            }
+
+            if (filteredData.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center py-8 text-slate-400">
+                            <i data-lucide="inbox" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
+                            <p>Belum ada data laporan kesehatan dalam kategori ini.</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tableBody.innerHTML = filteredData.map(item => {
+                // Status Badge Color
+                let statusBadge = '';
+                if (item.status === 'Menunggu') {
+                    statusBadge = `<span class="bg-amber-100 text-amber-800 border border-amber-300 font-bold px-2.5 py-0.5 rounded-full text-[10px]">Menunggu</span>`;
+                } else if (item.status === 'Diproses') {
+                    statusBadge = `<span class="bg-blue-100 text-blue-800 border border-blue-300 font-bold px-2.5 py-0.5 rounded-full text-[10px]">Diproses</span>`;
+                } else if (item.status === 'Selesai') {
+                    statusBadge = `<span class="bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold px-2.5 py-0.5 rounded-full text-[10px]">Selesai</span>`;
+                } else if (item.status === 'Dirujuk ke Puskesmas Setabu') {
+                    statusBadge = `<span class="bg-purple-100 text-purple-800 border border-purple-300 font-bold px-2.5 py-0.5 rounded-full text-[10px]">Rujukan Puskesmas</span>`;
+                }
+
+                // Action Cell based on Auth State
+                let actionCell = '';
+                if (isPetugas) {
+                    actionCell = `
+                        <div class="flex flex-col items-center gap-1">
+                            <select onchange="updateStatusLaporan('${item.id}', this.value)" class="text-[11px] bg-slate-50 border border-slate-300 rounded px-1.5 py-1 focus:ring-1 focus:ring-emerald-500 font-medium">
+                                <option value="Menunggu" ${item.status === 'Menunggu' ? 'selected' : ''}>Menunggu</option>
+                                <option value="Diproses" ${item.status === 'Diproses' ? 'selected' : ''}>Diproses</option>
+                                <option value="Selesai" ${item.status === 'Selesai' ? 'selected' : ''}>Selesai</option>
+                                <option value="Dirujuk ke Puskesmas Setabu" ${item.status === 'Dirujuk ke Puskesmas Setabu' ? 'selected' : ''}>Dirujuk ke Setabu</option>
+                            </select>
+                            <button onclick="deleteLaporan('${item.id}')" class="text-red-500 hover:text-red-700 text-[10px] underline">Hapus</button>
+                        </div>
+                    `;
+                } else {
+                    actionCell = `
+                        <div class="text-center text-slate-400 text-[11px] font-medium">
+                            ${item.nakesNote ? `<span class="text-emerald-700 font-semibold" title="${item.nakesNote}">Ditanggapi</span>` : 'Penyuntingan Khusus Nakes'}
+                        </div>
+                    `;
+                }
+
+                return `
+                    <tr class="hover:bg-slate-50/80 transition-colors">
+                        <td class="py-3 px-4 text-slate-500">
+                            <span class="font-mono text-[10px] text-slate-400 block">${item.id}</span>
+                            ${item.timestamp}
+                        </td>
+                        <td class="py-3 px-4 font-semibold text-slate-800">
+                            ${item.nama}
+                            <span class="block text-[11px] font-normal text-slate-500">${item.umur} Tahun</span>
+                        </td>
+                        <td class="py-3 px-4 text-slate-600 font-medium">${item.rt}</td>
+                        <td class="py-3 px-4">
+                            <span class="font-bold text-emerald-800 text-[11px]">${item.kategori}</span>
+                            <p class="text-slate-600 text-[11px] line-clamp-2 mt-0.5" title="${item.keluhan}">${item.keluhan}</p>
+                        </td>
+                        <td class="py-3 px-4">${statusBadge}</td>
+                        <td class="py-3 px-4">${actionCell}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // --- EVENT HANDLERS & ACTIONS ---
+
+        // Submit New Report (Form Warga)
+        document.getElementById('laporanForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const nama = document.getElementById('nama').value.trim();
+            const umur = document.getElementById('umur').value;
+            const rt = document.getElementById('rt').value;
+            const kategori = document.getElementById('kategori').value;
+            const noHp = document.getElementById('noHp').value.trim();
+            const gejala = document.getElementById('gejala').value.trim();
+            const keluhan = document.getElementById('keluhan').value.trim();
+
+            const now = new Date();
+            const timeString = now.getFullYear() + '-' + 
+                String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                String(now.getDate()).padStart(2, '0') + ' ' + 
+                String(now.getHours()).padStart(2, '0') + ':' + 
+                String(now.getMinutes()).padStart(2, '0');
+
+            const newLaporan = {
+                id: 'LAP-' + Math.floor(1000 + Math.random() * 9000),
+                timestamp: timeString,
+                nama,
+                umur: parseInt(umur),
+                rt,
+                kategori,
+                noHp,
+                gejala: gejala || 'Tidak ada spesifikasi gejala awal',
+                keluhan,
+                status: 'Menunggu',
+                nakesNote: ''
+            };
+
+            const data = getLaporanData();
+            data.unshift(newLaporan); // Add to top
+            saveLaporanData(data);
+
+            // Reset Form & Show Notification
+            this.reset();
+            alert(`Laporan Berhasil Terkirim!\n\nNomor Laporan: ${newLaporan.id}\nPetugas Pustu Binalawan akan memantau keluhan Anda.`);
+            
+            // Scroll to Table
+            document.getElementById('dashboard').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Update Report Status (Admin Petugas Feature)
+        function updateStatusLaporan(id, newStatus) {
+            const data = getLaporanData();
+            const index = data.findIndex(item => item.id === id);
+            if (index !== -1) {
+                data[index].status = newStatus;
+                saveLaporanData(data);
+            }
+        }
+
+        // Delete Report
+        function deleteLaporan(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus data laporan ini?')) {
+                const data = getLaporanData();
+                const filtered = data.filter(item => item.id !== id);
+                saveLaporanData(filtered);
+            }
+        }
+
+        // Export to CSV
+        document.getElementById('exportCsvBtn').addEventListener('click', function() {
+            const data = getLaporanData();
+            let csvContent = "data:text/csv;charset=utf-8,ID,Waktu,Nama,Umur,RT,Kategori,NoHP,Keluhan,Status\n";
+            
+            data.forEach(item => {
+                const row = `"${item.id}","${item.timestamp}","${item.nama}","${item.umur}","${item.rt}","${item.kategori}","${item.noHp}","${item.keluhan.replace(/"/g, '""')}","${item.status}"`;
+                csvContent += row + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Rekap_SIPantau_Binalawan_${new Date().toISOString().slice(0,10)}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        });
+
+        // Modal Controls
+        function openLoginModal() {
+            document.getElementById('loginModal').classList.remove('hidden');
+            document.body.classList.add('modal-active');
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.add('hidden');
+            document.body.classList.remove('modal-active');
+            document.getElementById('loginError').classList.add('hidden');
+        }
+
+        document.getElementById('closeModalBtn').addEventListener('click', closeLoginModal);
+
+        // Login Submit Handler
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const u = document.getElementById('loginUsername').value.trim();
+            const p = document.getElementById('loginPassword').value.trim();
+            const errorDiv = document.getElementById('loginError');
+
+            // Hardcoded Credentials for Demo
+            if (u === 'petugas' && p === 'pustu2026') {
+                const userObj = {
+                    username: 'petugas',
+                    nama: 'Harniati, A.Md.Kep',
+                    role: 'Nakes Pustu Binalawan'
+                };
+                setAuthSession(userObj);
+                closeLoginModal();
+                alert('Login Berhasil! Sesi Petugas Aktif.');
+            } else {
+                errorDiv.textContent = 'Username atau password salah! (Gunakan: petugas / pustu2026)';
+                errorDiv.classList.remove('hidden');
+            }
+        });
+
+        // Logout Handler
+        function handleLogout() {
+            if (confirm('Apakah Anda yakin ingin logout dari Sesi Petugas?')) {
+                clearAuthSession();
+            }
+        }
+
+        // Filter Dropdown Change
+        document.getElementById('filterStatus').addEventListener('change', renderApp);
+
+        // Mobile Menu Toggle
+        document.getElementById('mobileMenuBtn').addEventListener('click', function() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        });
+
+        // --- APP INIT ---
+        window.onload = function() {
+            renderApp();
+        };
+    </script>
+</body>
+</html>
